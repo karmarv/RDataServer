@@ -27,7 +27,13 @@ db.files.save(
 	 fileExtensionType: 'EXE'
 })
 
+PROJECT USAGE
+=============
 
+1. Start the mongod.exe standalone server
+2. Import the source as a maven project in Eclipse STS IDE
+2. MVN PACKAGE
+3. Deploy on a tomcat instance to see the data from mongodb
 
 
 APPENDIX/REFERENCE
