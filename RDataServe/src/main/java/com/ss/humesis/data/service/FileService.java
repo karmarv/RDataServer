@@ -1,18 +1,16 @@
 package com.ss.humesis.data.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ss.humesis.domain.File;
 
@@ -85,8 +83,9 @@ public class FileService {
 
 		try {
 			// Set a new value to the pid property first since it's blank
-			file.setFileId(UUID.randomUUID().toString());
+			//file.setFileId(UUID.randomUUID().toString());
 			// Insert to db
+			logger.info(file.toString());
 			mongoTemplate.insert(file,"files");
 
 			return true;
@@ -100,15 +99,18 @@ public class FileService {
 	 * Deletes an existing File
 	 */
 	public Boolean delete(String id) {
-		logger.info("Deleting existing File");
+		logger.info("Deleting existing File : "+id);
 
 		try {
 			File file = new File();
 			file.setFileId(id);
 			// Find an entry where pid matches the id
-			Query query = new Query(Criteria.where("fileId").is(file.getFileId()));
+			Query query = new Query();
+			query.addCriteria(Criteria.where("fileId").exists(true).
+				   orOperator(Criteria.where("fileId").is(file.getFileId()))
+				   );
 			// Run the query and delete the entry
-			mongoTemplate.remove(query);
+			mongoTemplate.findAndRemove(query, File.class,"files");
 			
 			return true;
 		} catch (Exception e) {
@@ -124,6 +126,7 @@ public class FileService {
 		logger.info("Editing existing File");
 
 		try {
+			logger.info(file.toString());
 			// Find an entry where pid matches the id
 			Query query = new Query(Criteria.where("fileId").is(file.getFileId()));
 

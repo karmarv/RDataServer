@@ -19,5 +19,5 @@
     	<constructor-arg name="databaseName" value="test"/>
   	</bean>
   	
-  	<!-- bean id="initService" class="com.ss.humesis.data.service.InitService" init-method="init"></bean> -->
+  	<bean id="initService" class="com.ss.humesis.data.service.InitService" init-method="init"></bean>
 </beans>
