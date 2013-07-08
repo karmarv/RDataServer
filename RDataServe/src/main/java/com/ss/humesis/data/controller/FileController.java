@@ -6,7 +6,9 @@ package com.ss.humesis.data.controller;
  *
  */
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -18,9 +20,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.ss.humesis.data.service.FileMetaService;
 import com.ss.humesis.data.service.FileService;
-import com.ss.humesis.domain.File;
+import com.ss.humesis.entity.FileMeta;
+import com.ss.humesis.model.Files;
 
 @Controller
 @RequestMapping("/main")
@@ -28,6 +33,9 @@ public class FileController {
 
 	protected static Logger logger = LoggerFactory.getLogger(FileController.class.getName());
 
+	@Resource(name="fileMetaService")
+	private FileMetaService fileMetaService;
+	
 	@Resource(name="fileService")
 	private FileService fileService;
 
@@ -41,12 +49,12 @@ public class FileController {
 	 * @return the name of the JSP page
 	 */
 	@RequestMapping(value = "/files", method = RequestMethod.GET)
-	public String getPersons(Model model) {
+	public String getFiles(Model model) {
 
 		logger.info("Received request to show all files");
 
 		// Retrieve all persons by delegating the call to PersonService
-		List<File> files = fileService.getAll();
+		List<FileMeta> files = fileMetaService.getAll();
 
 		logger.info("Size files list, "+files.size());
 		// Attach persons to the Model
@@ -67,7 +75,7 @@ public class FileController {
 
 		// Create new Person and add to model
 		// This is the formBackingOBject
-		model.addAttribute("fileAttribute", new File());
+		model.addAttribute("fileAttribute", new Files());
 
 		// This will resolve to /WEB-INF/jsp/addpage.jsp
 		return "addpage";
@@ -80,16 +88,30 @@ public class FileController {
 	 * @return  the name of the JSP page
 	 */
 	@RequestMapping(value = "/files/add", method = RequestMethod.POST)
-	public String add(@ModelAttribute("fileAttribute") File file) {
+	public String add(@ModelAttribute("fileAttribute") Files fileAttribute, Model map) {
 
-		logger.info("Received request to add new person: " + file.toString());
+		logger.info("Received request to add new person: " + fileAttribute.getFiles().size());
 
-		// The "fileAttribute" model has been passed to the controller from the JSP
-		// We use the name "fileAttribute" because the JSP uses that name
-
-		// Call FileService to do the actual adding
-		fileService.add(file);
-
+		//fileMetaService.add(file);
+		List<MultipartFile> files = fileAttribute.getFiles();
+	    List<String> fileNames = new ArrayList<String>();
+        if(null != files && files.size() > 0) {
+            for (MultipartFile multipartFile : files) { 
+                String fileName = multipartFile.getOriginalFilename();
+                if(!fileName.isEmpty() && multipartFile.getSize() > 0){
+	                fileNames.add(fileName);
+	                logger.info("Added Files: " +fileName);
+	                //Handle file content - multipartFile.getInputStream()
+	                // Add the meta info to the file meta collection
+	                FileMeta fm = new FileMeta(UUID.randomUUID().toString(), fileName, 
+	                		multipartFile.getOriginalFilename(), multipartFile.getSize(),
+	                		multipartFile.getContentType());
+	                fileMetaService.add(fm);
+	                // Add the actual byte buffer to the files collection
+                }
+            }
+        }     
+	    map.addAttribute("files", fileNames);
 		// This will resolve to /WEB-INF/jsp/addedpage.jsp
 		return "addedpage";
 	}
@@ -107,7 +129,7 @@ public class FileController {
 		logger.info("Received request to delete existing file");
 
 		// Call PersonService to do the actual deleting
-		fileService.delete(id);
+		fileMetaService.delete(id);
 
 		// Add id reference to Model
 		model.addAttribute("fileId", id);
@@ -128,7 +150,7 @@ public class FileController {
 
 		// Retrieve existing Person and add to model
 		// This is the formBackingOBject
-		model.addAttribute("fileAttribute", fileService.get(id).get(0));
+		model.addAttribute("fileAttribute", fileMetaService.get(id).get(0));
 
 		// This will resolve to /WEB-INF/jsp/editpage.jsp
 		return "editpage";
@@ -141,7 +163,7 @@ public class FileController {
 	 * @return  the name of the JSP page
 	 */
 	@RequestMapping(value = "/files/edit", method = RequestMethod.POST)
-	public String saveEdit(@ModelAttribute("fileAttribute") File file,
+	public String saveEdit(@ModelAttribute("fileAttribute") FileMeta file,
 			@RequestParam(value="fileId", required=true) String id,
 			Model model) {
 		logger.info("Received request to update file");
@@ -154,7 +176,7 @@ public class FileController {
 		file.setFileId(id);
 
 		// Delegate to FileService for editing
-		fileService.edit(file);
+		fileMetaService.edit(file);
 
 		// Add id reference to Model
 		model.addAttribute("fileId", id);
@@ -162,5 +184,4 @@ public class FileController {
 		// This will resolve to /WEB-INF/jsp/editedpage.jsp
 		return "editedpage";
 	}
-
 }

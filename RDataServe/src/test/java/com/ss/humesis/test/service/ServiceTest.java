@@ -20,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ss.humesis.data.service.FileService;
-import com.ss.humesis.domain.File;
+import com.ss.humesis.entity.FileMeta;
 
 /**
  * @author Rahul Vishwakarma
@@ -60,8 +60,8 @@ public class ServiceTest {
 	public void testGetAll() {
 		
 		try {
-			List<File> files = fileService.getAll();
-			for(File f : files){
+			List<FileMeta> files = fileService.getAll();
+			for(FileMeta f : files){
 				logger.info("File: "+ f.getFileName());	
 			}
 			logger.info("Size files list, "+files.size());
@@ -81,16 +81,16 @@ public class ServiceTest {
 	}
 
 	/**
-	 * Test method for {@link com.ss.humesis.data.service.FileService#add(com.ss.humesis.domain.File)}.
+	 * Test method for {@link com.ss.humesis.data.service.FileService#add(com.ss.humesis.entity.FileMeta)}.
 	 */
 	@Test
 	public void testAdd() {
 		//Create a file object
-		File file = new File();
+		FileMeta file = new FileMeta();
 		file.setFileId("1231");
 		file.setFileName("ABC.ADA");
 		file.setFilePath("/opt/maths/program");
-		file.setFileSizeInKB(112342);
+		file.setFileSize(112342);
 		
 		Boolean status = fileService.add(file);
 		assertTrue(status);
@@ -105,7 +105,7 @@ public class ServiceTest {
 	}
 
 	/**
-	 * Test method for {@link com.ss.humesis.data.service.FileService#edit(com.ss.humesis.domain.File)}.
+	 * Test method for {@link com.ss.humesis.data.service.FileService#edit(com.ss.humesis.entity.FileMeta)}.
 	 */
 	@Test
 	public void testEdit() {

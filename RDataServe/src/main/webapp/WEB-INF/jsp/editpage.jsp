@@ -28,12 +28,12 @@
 			<td><form:input path="filePath"/></td>
 		</tr>		
 		<tr>
-			<td><form:label path="fileSizeInKB">File Size:</form:label></td>
-			<td><form:input path="fileSizeInKB"/></td>
+			<td><form:label path="fileSize">File Size:</form:label></td>
+			<td><form:input path="fileSize"/></td>
 		</tr>
 		<tr>
-			<td><form:label path="fileExtensionType">Extension Type:</form:label></td>
-			<td><form:input path="fileExtensionType"/></td>
+			<td><form:label path="fileType">Extension Type:</form:label></td>
+			<td><form:input path="fileType"/></td>
 		</tr>
 	</table>
 	

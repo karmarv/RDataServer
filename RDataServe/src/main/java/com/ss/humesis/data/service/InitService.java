@@ -9,9 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.ss.humesis.domain.File;
+import com.ss.humesis.entity.FileMeta;
 
 /**
  * Service for initializing MongoDB with sample data
@@ -40,22 +39,22 @@ public class InitService {
 		mongoTemplate.createCollection("files", new CollectionOptions(10000000,5000,false));		
 		// Create new object
 		String id = UUID.randomUUID().toString();
-		File f = new File ();
+		FileMeta f = new FileMeta ();
 		f.setFileId("2324");
 		f.setFileName("ABC.BMP");
 		f.setFilePath("/opt/storage/maxdata");
-		f.setFileSizeInKB(23412);
-		f.setFileExtensionType("BMP");
+		f.setFileSize(23412);
+		f.setFileType("BMP");
 		
 		// Insert to db
 	    mongoTemplate.insert(f,"files");
 	    
-	    f = new File ();
+	    f = new FileMeta ();
 		f.setFileId("3341");
 		f.setFileName("DBC.JPG");
 		f.setFilePath("/opt/storage/rhldata");
-		f.setFileSizeInKB(23421);
-		f.setFileExtensionType("JPG");
+		f.setFileSize(23421);
+		f.setFileType("JPG");
 		
 		// Insert to db
 	    mongoTemplate.insert(f,"files");

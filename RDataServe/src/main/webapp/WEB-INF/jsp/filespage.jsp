@@ -30,8 +30,8 @@
 			<td><c:out value="${file.fileId}" /></td>
 			<td><c:out value="${file.fileName}" /></td>
 			<td><c:out value="${file.filePath}" /></td>
-			<td><c:out value="${file.fileSizeInKB}" /></td>
-			<td><c:out value="${file.fileExtensionType}" /></td>
+			<td><c:out value="${file.fileSize}" /></td>
+			<td><c:out value="${file.fileType}" /></td>
 			<td><a href="${editUrl}">Edit</a></td>
 			<td><a href="${deleteUrl}">Delete</a></td>
 			<td><a href="${addUrl}">Add</a></td>

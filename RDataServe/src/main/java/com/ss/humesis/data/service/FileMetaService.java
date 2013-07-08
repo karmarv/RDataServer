@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import com.ss.humesis.entity.FileMeta;
 
 /**
- * Service for processing {@link file} objects.
+ * Service for processing {@link file meta} objects.
  * Uses Spring's {@link MongoTemplate} to perform CRUD operations.
  * <p>
  * For a complete reference to MongoDB
@@ -26,18 +26,18 @@ import com.ss.humesis.entity.FileMeta;
  *
  * @author Rahul Vishwakarma
  */
-@Service("fileService")
-public class FileService {
+@Service("fileMetaService")
+public class FileMetaService {
 
-	public FileService() {
-		// TODO Auto-generated constructor stub
-	}
-
-	protected static Logger logger = LoggerFactory.getLogger(FileService.class.getName());
+	protected static Logger logger = LoggerFactory.getLogger(FileMetaService.class.getName());
 
 	@Resource(name="mongoTemplate")
 	private MongoTemplate mongoTemplate;
 
+	public FileMetaService() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	/**
 	 * Retrieves all Files
 	 */
@@ -136,8 +136,8 @@ public class FileService {
 			update.set("fileName", file.getFileName());
 			update.set("fileId", file.getFileId());
 			update.set("filePath", file.getFilePath());
-			update.set("fileSizeInKB", file.getFileSize());
-			update.set("fileExtensionType", file.getFileType());
+			update.set("fileSize", file.getFileSize());
+			update.set("fileType", file.getFileType());
 			
 			mongoTemplate.updateMulti(query, update,"files");
 

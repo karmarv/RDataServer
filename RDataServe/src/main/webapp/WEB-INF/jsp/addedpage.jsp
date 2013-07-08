@@ -15,5 +15,11 @@
 <p>You have added a new file at
 <%= new java.util.Date() %></p>
 
+<p>Following files are uploaded successfully.</p>
+<ol>
+     <c:forEach items="${files}" var="file">
+           - ${file} <br>
+     </c:forEach>
+</ol>
 </body>
 </html>

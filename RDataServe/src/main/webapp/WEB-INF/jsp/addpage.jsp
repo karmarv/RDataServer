@@ -6,40 +6,42 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>NEW FILE</title>
+<title>Spring MVC Multiple File Upload</title>
+<script
+src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    //add more file components if Add is clicked
+    $('#addFile').click(function() {
+        var fileIndex = $('#fileTable tr').children().length;
+        $('#fileTable').append(
+                '<tr><td>'+
+                '   <input type="file" name="files['+ fileIndex +']" />'+
+                '</td></tr>');
+    });
+     
+});
+</script>
 </head>
 <body>
 
-<h1>Create New File</h1>
+<h1>Browse New File</h1>
 
 <c:url var="saveUrl" value="/ss/main/files/add" />
-<form:form modelAttribute="fileAttribute" method="POST" action="${saveUrl}">
-	<table>
-		<tr>
-			<td><form:label path="fileId">File ID:</form:label></td>
-			<td><form:input path="fileId"/></td>
-		</tr>
-
-		<tr>
-			<td><form:label path="fileName">File Name:</form:label></td>
-			<td><form:input path="fileName"/></td>
-		</tr>
-		<tr>
-			<td><form:label path="filePath">File Path:</form:label></td>
-			<td><form:input path="filePath"/></td>
-		</tr>		
-		<tr>
-			<td><form:label path="fileSizeInKB">File Size:</form:label></td>
-			<td><form:input path="fileSizeInKB"/></td>
-		</tr>
-		<tr>
-			<td><form:label path="fileExtensionType">Extension Type:</form:label></td>
-			<td><form:input path="fileExtensionType"/></td>
-		</tr>
-	</table>
+<form:form modelAttribute="fileAttribute" method="POST" action="${saveUrl}" 
+										  enctype="multipart/form-data">
+	<input id="addFile" type="button" value="Add File" />
 	
-	<input type="submit" value="Save" />
+	<table id="fileTable">
+        <tr>
+            <td><input name="files[0]" type="file" /></td>
+        </tr>
+    </table>
+    <br/><input type="submit" value="Upload" />
 </form:form>
 
 </body>
+
+
+
 </html>
