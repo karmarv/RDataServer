@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import com.ss.humesis.entity.FileMeta;
+import com.ss.humesis.entity.FileObj;
 
 /**
  * Service for initializing MongoDB with sample data
@@ -39,7 +39,7 @@ public class InitService {
 		mongoTemplate.createCollection("files", new CollectionOptions(10000000,5000,false));		
 		// Create new object
 		String id = UUID.randomUUID().toString();
-		FileMeta f = new FileMeta ();
+		FileObj f = new FileObj();
 		f.setFileId("2324");
 		f.setFileName("ABC.BMP");
 		f.setFilePath("/opt/storage/maxdata");
@@ -49,7 +49,7 @@ public class InitService {
 		// Insert to db
 	    mongoTemplate.insert(f,"files");
 	    
-	    f = new FileMeta ();
+	    f = new FileObj ();
 		f.setFileId("3341");
 		f.setFileName("DBC.JPG");
 		f.setFilePath("/opt/storage/rhldata");

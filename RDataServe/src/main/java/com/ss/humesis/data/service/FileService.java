@@ -1,18 +1,28 @@
 package com.ss.humesis.data.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.ss.humesis.entity.FileMeta;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.gridfs.GridFSDBFile;
+import com.mongodb.gridfs.GridFSFile;
+import com.ss.humesis.entity.FileObj;
 
 /**
  * Service for processing {@link file} objects.
@@ -34,83 +44,136 @@ public class FileService {
 	}
 
 	protected static Logger logger = LoggerFactory.getLogger(FileService.class.getName());
+	
+	@Resource(name="gridFsTemplate")
+	private GridFsOperations gridFsTemplate;
 
-	@Resource(name="mongoTemplate")
-	private MongoTemplate mongoTemplate;
-
+	 
+    public GridFSDBFile getFileById(String id) {
+    	Query query = new Query();
+		query.addCriteria(Criteria.where("fileId").exists(true).
+			   orOperator(Criteria.where("fileId").is(id))
+			   );
+    	return gridFsTemplate.findOne(query);
+    }
+ 
+    
+    public GridFSDBFile getFileByName(String filename) {
+    	Query query = new Query();
+		query.addCriteria(Criteria.where("fileName").exists(true).
+			   orOperator(Criteria.where("fileName").is(filename))
+			   );
+    	return gridFsTemplate.findOne(query);
+    }
+    
 	/**
 	 * Retrieves all Files
 	 */
-	public List<FileMeta> getAll() {
+	public List<FileObj> getAll() {
 		logger.info("Retrieving all Files");
-
 		// Find an entry where fileid property exists
 		// Execute the query and find all matching entries
-		List<FileMeta> files=null;
+		List<GridFSDBFile> result=null;
+		List<FileObj> files=null;
 		try {
-			Query query = new Query(Criteria.where("fileId").exists(true));
-			files = mongoTemplate.find(query, FileMeta.class,"files");
+			Query query =  new Query();
+			//files = mongoTemplate.find(query, FileObj.class,"files");
+			result = gridFsTemplate.find(query);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
+		if(result != null && result.size()>0){
+			files = new ArrayList<FileObj>();	 
+			for (GridFSDBFile file : result) {
+				logger.info(file.getMetaData().toString());
+				System.out.println(file.getContentType());
+				
+				files.add(new FileObj(file.getId().toString(), file.getFilename(),
+						file.getLength(), file.getMetaData().get("fileType").toString(),
+						Integer.parseInt(file.getMetaData().get("fileVersion").toString())));
+			}
+		}
+		
 		return files;
 	}
 
 	/**
 	 * Retrieves a single File
 	 */
-	public List<FileMeta> get( String id ) {
-		logger.info("Retrieving an existing File");
-		List<FileMeta> files=null;
-		try{
-			// Find an entry where pid matches the id
-			Query query = new Query(Criteria.where("fileId").is(id));
-			// Execute the query and find one matching entry
-			files = mongoTemplate.find( query, FileMeta.class,"files");
+	public List<FileObj> get( String id ) {
+		logger.info("Retrieving an existing File id: "+id);
+		GridFSDBFile result=null;
+		List<FileObj> files= new ArrayList<FileObj>();
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("_id").exists(true).
+				   orOperator(Criteria.where("_id").is(new ObjectId(id)))
+				   );
+			result = gridFsTemplate.findOne(query);
+			if(result != null)	
+				files.add(new FileObj(result.getId().toString(), result.getFilename(),
+					result.getLength(), result.getMetaData().get("fileType").toString(),
+					Integer.parseInt(result.getMetaData().get("fileVersion").toString())));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return files;
 	}
 
 	/**
-	 * Adds a new File
+	 * Adds a new File to the files collection of MongoDB
 	 */
-	public Boolean add(FileMeta file) {
-		logger.info("Adding a new file, "+file.toString());
-
+	public String add(MultipartFile file, String fileId) {
+		logger.info("Adding a new file, "+file.getOriginalFilename());
+		InputStream inputStream=null;
+		GridFSFile gfile=null;
+		DBObject metaData = new BasicDBObject();
+		
 		try {
-			// Set a new value to the pid property first since it's blank
-			//file.setFileId(UUID.randomUUID().toString());
-			// Insert to db
-			mongoTemplate.insert(file,"files");
-
-			return true;
+			//mongoTemplate.insert(file,"files");
+			//return true;
+		    inputStream = file.getInputStream();
+		    metaData.put("fileId", fileId);
+	        metaData.put("fileType", file.getContentType());
+	        metaData.put("fileName", file.getOriginalFilename());
+	        metaData.put("fileSize", file.getSize());
+	        metaData.put("fileVersion",1);
+	        gfile = gridFsTemplate.store(inputStream,file.getOriginalFilename(), metaData);
+	        
+		} catch (FileNotFoundException e) {
+			logger.error("An error has occurred while trying to add new file", e);
+			e.printStackTrace();
+			return null;
 		} catch (Exception e) {
 			logger.error("An error has occurred while trying to add new file", e);
-			return false;
+			return null;
+		}finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					logger.error("An error has occurred while trying close file", e);
+					e.printStackTrace();
+				}
+			}
 		}
-	}
+		return gfile.getId().toString();
+	} 
 
 	/**
-	 * Deletes an existing File
+	 * Deletes an existing File from collection files
 	 */
 	public Boolean delete(String id) {
 		logger.info("Deleting existing File : "+id);
-
 		try {
-			FileMeta file = new FileMeta();
-			file.setFileId(id);
-			// Find an entry where pid matches the id
+			// IFind an entry where filed matches the id
 			Query query = new Query();
-			query.addCriteria(Criteria.where("fileId").exists(true).
-				   orOperator(Criteria.where("fileId").is(file.getFileId()))
+			query.addCriteria(Criteria.where("_id").exists(true).
+				   orOperator(Criteria.where("_id").is(new ObjectId(id)))
 				   );
-			// Run the query and delete the entry
-			mongoTemplate.findAndRemove(query, FileMeta.class,"files");
-			
+	    	gridFsTemplate.delete(query);
+	    	
 			return true;
 		} catch (Exception e) {
 			logger.error("An error has occurred while trying to delete new user", e);
@@ -118,35 +181,52 @@ public class FileService {
 		}
 	}
 
-	/**
-	 * Edits an existing File
+	/** Edits an existing File
+	 * 
+	 * TODO : The logic needs to see whether we really need to update
+	 * or delete and create another entry 
+	 * 
 	 */
-	public Boolean edit(FileMeta file) {
+	public Boolean edit(FileObj file) {
 		logger.info("Editing existing File");
-
-		try {
-			logger.info(file.toString());
-			// Find an entry where pid matches the id
-			Query query = new Query(Criteria.where("fileId").is(file.getFileId()));
-
-			// Declare an Update object. 
-			// This matches the update modifiers available in MongoDB
-			Update update = new Update();
-
-			update.set("fileName", file.getFileName());
-			update.set("fileId", file.getFileId());
-			update.set("filePath", file.getFilePath());
-			update.set("fileSizeInKB", file.getFileSize());
-			update.set("fileExtensionType", file.getFileType());
+		logger.info(file.toString());
+		// Find an entry where pid matches the id
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").exists(true).
+			   orOperator(Criteria.where("_id").is(new ObjectId(file.getFileId())))
+			   );
+		GridFSDBFile fileFS = gridFsTemplate.findOne(query);
+		
+		InputStream inputStream=null;
+		GridFSFile gfile=null;
+		DBObject metaData = new BasicDBObject();
 			
-			mongoTemplate.updateMulti(query, update,"files");
-
-			return true;
+		try{
+			if(fileFS == null || fileFS.getFilename().isEmpty())
+				return false;
+			
+			inputStream = fileFS.getInputStream();
+			metaData.put("fileId", file.getFileId());
+			metaData.put("fileType", file.getFileType());
+			metaData.put("fileName", file.getFileName());
+			metaData.put("fileSize", file.getFileSize());
+			metaData.put("fileVersion",file.getFileVersionId()+1);
+			gfile = gridFsTemplate.store(inputStream,file.getFileName(), metaData);
+			//Remove this object from the files db
+			delete(file.getFileId());
 		} catch (Exception e) {
-			logger.error("An error has occurred while trying to edit existing user", e);
+			logger.error("An error has occurred while trying to add new file", e);
 			return false;
+		}finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					logger.error("An error has occurred while trying close file", e);
+					e.printStackTrace();
+				}
+			}
 		}
-
+		return true;
 	}
-
 }

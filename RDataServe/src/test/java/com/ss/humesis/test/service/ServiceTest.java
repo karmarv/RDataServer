@@ -20,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ss.humesis.data.service.FileService;
-import com.ss.humesis.entity.FileMeta;
+import com.ss.humesis.entity.FileObj;
 
 /**
  * @author Rahul Vishwakarma
@@ -60,9 +60,9 @@ public class ServiceTest {
 	public void testGetAll() {
 		
 		try {
-			List<FileMeta> files = fileService.getAll();
-			for(FileMeta f : files){
-				logger.info("File: "+ f.getFileName());	
+			List<FileObj> files = fileService.getAll();
+			for(FileObj f : files){
+				logger.info("File: "+ f.getFileId());	
 			}
 			logger.info("Size files list, "+files.size());
 			assertTrue(files.size()>1);
@@ -86,14 +86,9 @@ public class ServiceTest {
 	@Test
 	public void testAdd() {
 		//Create a file object
-		FileMeta file = new FileMeta();
+		FileObj file = new FileObj();
 		file.setFileId("1231");
-		file.setFileName("ABC.ADA");
-		file.setFilePath("/opt/maths/program");
-		file.setFileSize(112342);
 		
-		Boolean status = fileService.add(file);
-		assertTrue(status);
 	}
 
 	/**

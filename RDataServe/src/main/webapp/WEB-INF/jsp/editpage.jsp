@@ -24,8 +24,8 @@
 			<td><form:input path="fileName"/></td>
 		</tr>
 		<tr>
-			<td><form:label path="filePath">File Path:</form:label></td>
-			<td><form:input path="filePath"/></td>
+			<td><form:label path="fileVersionId">Version:</form:label></td>
+			<td><form:input path="fileVersionId"/></td>
 		</tr>		
 		<tr>
 			<td><form:label path="fileSize">File Size:</form:label></td>
