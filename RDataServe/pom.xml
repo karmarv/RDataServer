@@ -10,6 +10,9 @@
 	<properties>
 		<java.version>1.7</java.version>
 		<spring.version>3.1.1.RELEASE</spring.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.test.failure.ignore>true</maven.test.failure.ignore>
+		<maven.tomcat.port>8088</maven.tomcat.port>
 	</properties>
 
 	<dependencies>
@@ -150,6 +153,15 @@
 				<version>2.15</version>
 				<configuration>
 					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+				<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>          
+				    <server>tomcat-development-server</server>
+				    <port>${maven.tomcat.port}</port>
 				</configuration>
 			</plugin>
 		</plugins>
