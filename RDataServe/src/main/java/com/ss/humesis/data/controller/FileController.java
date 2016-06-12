@@ -52,7 +52,7 @@ public class FileController {
 		// Retrieve all persons by delegating the call to PersonService
 		List<FileObj> files = fileService.getAll();
 		//List<FileObj> files = fileService.getAll();
-		logger.info("Size files list, "+files.toString());
+		logger.info("Size files list, "+files);
 		// Attach persons to the Model
 		model.addAttribute("files", files);
 
