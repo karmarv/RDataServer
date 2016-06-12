@@ -1,7 +1,30 @@
 RDataServer
 ===========
 
-Hello draft of the Mongo DB based data store service
+Hello draft of the Mongo DB based file data store service
+
+
+GIT USAGE 
+=========
+
+There are two more branches apart from the master branch which have the file upload functionality
+
+git --clone https://github.com/vishwakarmarhl/RDataServer
+
+#Branch A. 
+git checkout -b FileUploadGridFSSpring origin/FileUploadGridFSSpring
+#Branch B. 
+git checkout -b MultiPartFileUpload origin/MultiPartFileUpload
+
+# Pull the current branch 
+git pull 
+#After making changes in any of them index and commit 
+git add .
+git commit -m "Updated the code and added a message"
+
+#Push changes to the gtihub repository
+git push origin FileUploadGridFSSpring
+git push origin MultiPartFileUpload
 
 
 SETUP & START MONGO DB WIN x64
@@ -11,7 +34,7 @@ Download : http://www.mongodb.org/dr/downloads.mongodb.org/win32/mongodb-win32-x
 
 1. Unzip the zip contents in C:\mongodb\
 2. create C:\data\db
-3. Execute the C:\mongodb\bin\mongod.exe
+3. Execute the C:\mongodb\bin\mongod.exe  --dbpath C:\data\db
 
 CREATE SAMPLE DATA
 ==================
@@ -34,6 +57,9 @@ PROJECT USAGE
 2. Import the source as a maven project in Eclipse STS IDE
 2. MVN PACKAGE
 3. Deploy on a tomcat instance to see the data from mongodb
+4. An alternate plugin for tomcat enables maven based initialization.
+	mvn tomcat7:run
+5. Open up http://localhost:8088/RDataServe to checkout the grid for file data 
 
 
 APPENDIX/REFERENCE
