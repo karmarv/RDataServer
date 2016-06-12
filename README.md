@@ -11,21 +11,22 @@ There are two more branches apart from the master branch which have the file upl
 
 git --clone https://github.com/vishwakarmarhl/RDataServer
 
-1. Chekout the branch 
-Branch A. 
-git checkout -b FileUploadGridFSSpring origin/FileUploadGridFSSpring
-Branch B. 
-git checkout -b MultiPartFileUpload origin/MultiPartFileUpload
+1. Checkout the branch 
+	Branch A. 
+	git checkout -b FileUploadGridFSSpring origin/FileUploadGridFSSpring
+	Branch B. 
+	git checkout -b MultiPartFileUpload origin/MultiPartFileUpload
 
 2. Pull the current branch 
-git pull 
+	git pull 
+
 3. After making changes in any of them index and commit 
-git add .
-git commit -m "Updated the code and added a message"
+	git add .
+	git commit -m "Updated the code and added a message"
 
 4. Push changes to the gtihub repository
-git push origin FileUploadGridFSSpring
-git push origin MultiPartFileUpload
+	git push origin FileUploadGridFSSpring
+	git push origin MultiPartFileUpload
 
 
 SETUP & START MONGO DB WIN x64
