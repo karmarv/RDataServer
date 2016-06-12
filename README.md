@@ -9,9 +9,10 @@ GIT USAGE
 
 There are two more branches apart from the master branch which have the file upload functionality
 
-git --clone https://github.com/vishwakarmarhl/RDataServer
-
 1. Checkout the branch 
+
+  * git --clone https://github.com/vishwakarmarhl/RDataServer  
+  
   * Branch A  
    git checkout -b FileUploadGridFSSpring origin/FileUploadGridFSSpring  
   * Branch B  
