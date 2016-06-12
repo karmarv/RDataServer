@@ -25,7 +25,7 @@ There are two more branches apart from the master branch which have the file upl
    git add .  
    git commit -m "Updated the code and added a message"  
 
-4. Push changes to the gtihub repository  
+4. Push changes to the github repository  
    git push origin FileUploadGridFSSpring  
    git push origin MultiPartFileUpload  
 
