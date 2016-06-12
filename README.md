@@ -11,18 +11,19 @@ There are two more branches apart from the master branch which have the file upl
 
 git --clone https://github.com/vishwakarmarhl/RDataServer
 
-#Branch A. 
+1. Chekout the branch 
+Branch A. 
 git checkout -b FileUploadGridFSSpring origin/FileUploadGridFSSpring
-#Branch B. 
+Branch B. 
 git checkout -b MultiPartFileUpload origin/MultiPartFileUpload
 
-# Pull the current branch 
+2. Pull the current branch 
 git pull 
-#After making changes in any of them index and commit 
+3. After making changes in any of them index and commit 
 git add .
 git commit -m "Updated the code and added a message"
 
-#Push changes to the gtihub repository
+4. Push changes to the gtihub repository
 git push origin FileUploadGridFSSpring
 git push origin MultiPartFileUpload
 
