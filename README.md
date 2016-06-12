@@ -11,7 +11,7 @@ There are two more branches apart from the master branch which have the file upl
 
 1. Checkout the branch 
 
-  * git --clone https://github.com/vishwakarmarhl/RDataServer  
+  * git clone https://github.com/vishwakarmarhl/RDataServer  
   
   * Branch A  
    git checkout -b FileUploadGridFSSpring origin/FileUploadGridFSSpring  
